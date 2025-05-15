@@ -126,11 +126,3 @@ GoQuant Assignment/
 This project is for educational and assessment purposes.
 
 ---
-
-## Contact
-
-For questions or submissions, email:  
-- careers@goquant.io  
-- CC: himanshu.vairagade@goquant.io
-
----
