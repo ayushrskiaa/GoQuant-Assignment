@@ -2,23 +2,29 @@
 
 ## Overview
 
-The GoQuant Trade Simulator is a high-performance Python application that connects to real-time cryptocurrency orderbook data via WebSocket, simulates market orders, and estimates transaction costs and market impact. It features a PyQt5-based GUI for user input and real-time output display.
+This is my implementation of the GoQuant Trade Simulator. It's a Python app that connects to real-time crypto orderbook data (OKX, via WebSocket), simulates market orders, and estimates transaction costs and market impact. The UI is built with PyQt5, so you can input parameters and see outputs update live.
 
 ---
 
 ## Features
 
-- **Real-time L2 orderbook ingestion** from OKX via WebSocket.
-- **User interface** for parameter input (exchange, asset, order type, quantity, volatility, fee tier).
-- **Output metrics:**  
+- Real-time L2 orderbook data from OKX (WebSocket)
+- User interface for:
+  - Exchange selection
+  - Asset selection
+  - Order type
+  - Quantity (USD)
+  - Volatility
+  - Fee tier
+- Outputs (update every tick):
   - Expected Slippage (regression model)
   - Expected Fees (rule-based)
   - Expected Market Impact (Almgren-Chriss model)
   - Net Cost (sum of above)
   - Maker/Taker Proportion (logistic regression)
   - Internal Latency (processing time per tick)
-- **Robust error handling** and automatic WebSocket reconnection.
-- **Extensible model architecture** for slippage, market impact, and maker/taker prediction.
+- Handles WebSocket disconnects and reconnects automatically
+- Modular code for slippage, market impact, and maker/taker models
 
 ---
 
@@ -44,15 +50,15 @@ GoQuant Assignment/
 
 ## Setup
 
-1. **Install dependencies:**
+1. Install dependencies:
    ```sh
    pip install -r requirements.txt
    ```
 
-2. **(Optional) Activate VPN:**  
-   Some exchanges (like OKX) may require a VPN for access.
+2. (Optional) Activate VPN  
+   OKX may require a VPN for access.
 
-3. **Run the application:**
+3. Run the app:
    ```sh
    python main.py
    ```
@@ -61,63 +67,49 @@ GoQuant Assignment/
 
 ## Usage
 
-- **Input Parameters:**  
-  Select exchange, asset, order type, quantity (USD), volatility, and fee tier in the left panel.
-- **Start Simulation:**  
-  Click "Start Simulation" to connect to the WebSocket and begin real-time simulation.
-- **View Outputs:**  
-  The right panel displays slippage, fees, market impact, net cost, maker/taker proportion, and latency, updated with each orderbook tick.
+- Fill in the left panel with your parameters (exchange, asset, order type, quantity, volatility, fee tier).
+- Click "Start Simulation" to connect to the WebSocket and start the simulation.
+- The right panel will show slippage, fees, market impact, net cost, maker/taker proportion, and latency, updating live.
 
 ---
 
 ## Models and Algorithms
 
-- **Slippage:**  
-  Uses a linear regression model (`models/slippage.py`). Train with historical data for best results.
-- **Market Impact:**  
-  Implements the Almgren-Chriss model (`models/market_impact.py`) for estimating temporary and permanent price impact.
-- **Fees:**  
-  Calculated as `quantity * price * fee_rate` (`utils/fees.py`).
-- **Maker/Taker Proportion:**  
-  Logistic regression model (`models/maker_taker.py`).
-- **Latency:**  
-  Measured per tick using Python's `time.perf_counter()`.
+- **Slippage:** Linear regression (`models/slippage.py`). For best results, train with historical data.
+- **Market Impact:** Almgren-Chriss model (`models/market_impact.py`).
+- **Fees:** Simple rule: `quantity * price * fee_rate` (`utils/fees.py`).
+- **Maker/Taker Proportion:** Logistic regression (`models/maker_taker.py`).
+- **Latency:** Measured per tick using `time.perf_counter()`.
 
 ---
 
 ## Error Handling & Reconnection
 
-- The WebSocket client (`websocket_client.py`) automatically logs errors and attempts to reconnect after a delay if the connection drops (e.g., due to ping timeout or network issues).
+If the WebSocket connection drops (e.g., ping timeout, network issues), the client logs the error and tries to reconnect after a short delay.
 
 ---
 
 ## Performance Notes
 
-- **Async WebSocket** ensures data is processed faster than it is received.
-- **Threading** is used to run async code alongside the PyQt5 event loop.
-- **Efficient data structures** and minimal UI updates for low latency.
+- Uses async WebSocket for fast data processing.
+- Async code runs in a thread so it doesn't block the PyQt5 UI.
+- Minimal UI updates for low latency.
 
 ---
 
 ## Customization & Extension
 
-- **Add new models:**  
-  Place new model files in the `models/` directory and import them in `main.py`.
-- **Change endpoints:**  
-  Update the WebSocket URL in `main.py` as needed.
-- **Tune reconnection:**  
-  Adjust `reconnect_delay` in `websocket_client.py`.
+- Add new models: put them in `models/` and import in `main.py`.
+- Change endpoints: edit the WebSocket URL in `main.py`.
+- Tune reconnection: adjust `reconnect_delay` in `websocket_client.py`.
 
 ---
 
 ## Troubleshooting
 
-- **WebSocket errors:**  
-  Ensure your VPN is active and your network allows access to the exchange endpoint.
-- **No data:**  
-  Check endpoint status and your internet connection.
-- **Model errors:**  
-  Ensure all dependencies are installed and models are properly trained.
+- **WebSocket errors:** Make sure your VPN is on and your network allows access to OKX.
+- **No data:** Check the endpoint status and your internet connection.
+- **Model errors:** Make sure all dependencies are installed and models are trained.
 
 ---
 
